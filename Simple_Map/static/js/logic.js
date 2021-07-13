@@ -11,11 +11,19 @@ let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tile
 // Then we add our 'graymap' tile layer to the map.
 streets.addTo(map);
 
+let citiesData = cities;
 
 
-var circle = L.circleMarker([34.0522, -118.2437], {
-    color: 'black',
-    fillColor: 'cornsilk',
-    fillOpacity: 0.6,
-    radius: 300
-}).addTo(map);
+
+  citiesData.forEach((city) => {
+      L.circleMarker(city.location,{
+          radius: city.population/100000,
+          color: 'orange',
+          fillColor:'bisque',
+          fillOpacity: '0.5',
+          weight: 4
+      })    
+      .bindPopup(`<h2>${city.city},${city.state}</h2><hr><h3>Population: ${(city.population).toLocaleString()}<h3>`)
+      .addTo(map)
+
+  })
