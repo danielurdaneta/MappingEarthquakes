@@ -2,46 +2,47 @@ console.log('working');
 
 
 // We create the tile layer that will be the background of our map.
-let day = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-day-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 
-let night = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 
 let map = L.map('mapid', {
-    layers: [night],
-    center: [44,-80],
-    zoom: 4
+    layers: [streets],
+    center: [43.7,-79.3],
+    zoom: 11
 });
 
 
 let baseMaps = {
-    'Day Navigation' : day,
-    'Night Navigation': night
+    'Streets' : streets,
+    'Satelite': satellite
 }
 
 L.control.layers(baseMaps).addTo(map)
 
+let torontoHoods = 'https://raw.githubusercontent.com/danielurdaneta/Mapping_Earthquakes/main/torontoNeighborhoods.json'
+
+var Mystyle = {
+    color: 'black',
+    weight: 2,
+    fillColor: 'darkred'
+} 
 
 
-var torontoData = 'https://raw.githubusercontent.com/danielurdaneta/Mapping_Earthquakes/main/torontoRoutes.json'
-
-
-
-d3.json(torontoData).then(data =>{
+d3.json(torontoHoods).then(data =>{
     console.log(data)
-   L.geoJson(data,{
-       weight: 2,
-       opacity: 0.4,
-       color: 'darkgreen',
+   L.geoJson(data, {
+       style: Mystyle,
        onEachFeature: (feature, layer) => {
-           layer.bindPopup('<h3> Airline: ' + feature.properties.airline + '</h3><hr><h4>Destination: ' + feature.properties.dst + '</h4>' )
+           layer.bindPopup('<h3> Neighborhood: ' + feature.properties.AREA_NAME)
        }
    }).addTo(map)})
 
