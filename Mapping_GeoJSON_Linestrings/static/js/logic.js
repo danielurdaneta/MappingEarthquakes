@@ -2,50 +2,48 @@ console.log('working');
 
 
 // We create the tile layer that will be the background of our map.
-let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let day = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-day-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 
-let dark = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let night = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
 });
 
 let map = L.map('mapid', {
-    layers: [streets],
-    center: [30,30],
-    zoom: 2
+    layers: [night],
+    center: [44,-80],
+    zoom: 4
 });
 
 
 let baseMaps = {
-    Dark : dark,
-    Street: streets
+    'Day Navigation' : day,
+    'Night Navigation': night
 }
 
 L.control.layers(baseMaps).addTo(map)
 
 
 
-var airportData = 'https://raw.githubusercontent.com/danielurdaneta/Mapping_Earthquakes/main/majorAirports.json'
+var torontoData = 'https://raw.githubusercontent.com/danielurdaneta/Mapping_Earthquakes/main/torontoRoutes.json'
 
 
 
-d3.json(airportData).then(data =>{
+d3.json(torontoData).then(data =>{
     console.log(data)
-    L.geoJson(data,{
-        pointToLayer: (feature, latlng) => {
-          return L.marker(latlng);
-       },
+   L.geoJson(data,{
+       weight: 2,
+       opacity: 0.4,
+       color: 'darkgreen',
        onEachFeature: (feature, layer) => {
-           layer.bindPopup('<h3> Airport code: '+  feature.properties.faa + '</h3>' + '<hr>' + '<h4> Airport name: '+ feature.properties.name)
-           console.log(layer)
+           layer.bindPopup('<h3> Airline: ' + feature.properties.airline + '</h3><hr><h4>Destination: ' + feature.properties.dst + '</h4>' )
        }
-       }).addTo(map);
-})
+   }).addTo(map)})
 
 
 // var line = [
