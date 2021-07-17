@@ -100,7 +100,35 @@ let map = L.map('mapid', {
 });
 
 
+var legend = L.control({position: 'bottomright'})
 
+function getColor(d) {
+    return d > 1 && d < 3 ? '#D4EE00' :
+           d > 2  && d < 4 ? '#EECC00' :
+           d > 3   && d < 5? '#EE9C00' :
+           d > 4   && d < 6? '#ea822c' :
+           d > 5    && d < 10? '#ea2c2c' :
+                      '#FFEDA0';
+}
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [1,2,3,4,5],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    div.innerHTML += '<h4>Earthquakes <br> magnitudes</h4>'
+
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+legend.addTo(map)
 
 L.control.layers(baseMaps, markerslayer, {collapsed: false}).addTo(map)
 
