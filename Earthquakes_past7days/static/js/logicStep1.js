@@ -14,19 +14,7 @@ let satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-s
     accessToken: API_KEY
 });
 
-let map = L.map('mapid', {
-    layers: [streets],
-    center: [39.5,-98.5],
-    zoom: 3
-});
 
-
-let baseMaps = {
-    'Streets' : streets,
-    'Satellite': satellite
-}
-
-L.control.layers(baseMaps).addTo(map)
 
 let earthQuakesData = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
                        
@@ -77,8 +65,9 @@ function stileInfo(feature) {
 
 
 d3.json(earthQuakesData).then(data =>{
+
     
-   L.geoJson(data,{
+    L.geoJSON(data,{
     style:stileInfo,
     pointToLayer: (feature, latlng) => {
         return L.circleMarker(latlng)
@@ -87,7 +76,33 @@ d3.json(earthQuakesData).then(data =>{
         layer.bindPopup('<h4> Magnitude: ' + feature.properties.mag + '<br> Location: ' + feature.properties.place)
      }
   
-   }).addTo(map)})
+   }).addTo(markers)
+
+})
+
+let markers = new L.LayerGroup()
+
+
+   let baseMaps = {
+    'Streets' : streets,
+    'Satellite': satellite,
+ 
+}
+
+    let markerslayer = {
+        'Layer': markers
+    }
+
+let map = L.map('mapid', {
+    layers: [streets, markers],
+    center: [39.5,-98.5],
+    zoom: 3
+});
+
+
+
+
+L.control.layers(baseMaps, markerslayer, {collapsed: false}).addTo(map)
 
 
 
