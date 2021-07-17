@@ -31,16 +31,42 @@ L.control.layers(baseMaps).addTo(map)
 let earthQuakesData = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson'
                        
 
-var Mystyle = {
-    color: 'black',
-    weight: 2,
-    fillColor: 'darkred'
-} 
+function radiusize(data) {
+    
+    for(let i = 0; i < data.features.lenght; i++){
+        data.features[i].properties.mag * 10
+    }
+       
+}
+
+function getRadius(magnitude) {
+    if (magnitude === 0) {
+        return 1 
+    }
+    return magnitude * 4
+}
+
+function stileInfo(feature) {
+        return {
+            fillColor: 'orange',
+            fillOpacity: 1.0,
+            color: 'black',
+            weight: 0.5,
+            radius: getRadius(feature.properties.mag)
+}
+}
 
 
 d3.json(earthQuakesData).then(data =>{
-    console.log(data)
-   L.geoJson(data).addTo(map)})
+    
+   L.geoJson(data,{
+    style:stileInfo,
+    pointToLayer: (feature, latlng) => {
+        return L.circleMarker(latlng)
+
+     }
+  
+   }).addTo(map)})
 
 
 
