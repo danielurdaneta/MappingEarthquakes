@@ -46,9 +46,28 @@ function getRadius(magnitude) {
     return magnitude * 4
 }
 
+function colorMagnitude(magnitude){
+    if (magnitude > 5) {
+        return "#ea2c2c";
+      }
+      if (magnitude > 4) {
+        return "#ea822c";
+      }
+      if (magnitude > 3) {
+        return "#ee9c00";
+      }
+      if (magnitude > 2) {
+        return "#eecc00";
+      }
+      if (magnitude > 1) {
+        return "#d4ee00";
+      }
+      return "#98ee00"
+}
+
 function stileInfo(feature) {
         return {
-            fillColor: 'orange',
+            fillColor: colorMagnitude(feature.properties.mag),
             fillOpacity: 1.0,
             color: 'black',
             weight: 0.5,
@@ -63,7 +82,9 @@ d3.json(earthQuakesData).then(data =>{
     style:stileInfo,
     pointToLayer: (feature, latlng) => {
         return L.circleMarker(latlng)
-
+     },
+     onEachFeature: (feature, layer) => {
+        layer.bindPopup('<h4> Magnitude: ' + feature.properties.mag + '<br> Location: ' + feature.properties.place)
      }
   
    }).addTo(map)})
